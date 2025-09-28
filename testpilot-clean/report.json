@@ -1,0 +1,375 @@
+{
+  "stack": {
+    "languages": [
+      "JavaScript/TypeScript"
+    ],
+    "frameworks": [
+      "Next.js"
+    ],
+    "managers": [
+      "npm"
+    ],
+    "runtimes": [
+      "Node.js"
+    ],
+    "npm_scripts": {
+      "start": "node -r dotenv/config ./dist/index.js",
+      "test": "jest",
+      "build": "rm -rf dist && rollup -c rollup.config.ts --configPlugin @rollup/plugin-typescript && ncc build src/github-action.cjs -o action",
+      "build:lambda": "ncc build src/aws-lambda.cjs -o lambda"
+    },
+    "externals": [
+      "OpenAI"
+    ]
+  },
+  "entrypoints": [
+    "api/github/webhooks/index.ts",
+    "src/index.ts"
+  ],
+  "routes": [],
+  "roles": [
+    [
+      "CODE_OF_CONDUCT.md",
+      "Documentation"
+    ],
+    [
+      "CONTRIBUTING.md",
+      "Documentation"
+    ],
+    [
+      "README.ja.md",
+      "Documentation"
+    ],
+    [
+      "README.ko.md",
+      "Documentation"
+    ],
+    [
+      "README.md",
+      "Documentation"
+    ],
+    [
+      "README.zh-CN.md",
+      "Documentation"
+    ],
+    [
+      "README.zh-TW.md",
+      "Documentation"
+    ],
+    [
+      "action/37.index.cjs.js",
+      "Entry Point"
+    ],
+    [
+      "action/file.js",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/middleware.d.ts",
+      "HTTP Middleware"
+    ],
+    [
+      "action/multipart-parser-d1d13d05.js",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/rollup.config.d.ts",
+      "Configuration"
+    ],
+    [
+      "action/src/bot.d.ts",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/src/chat.d.ts",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/src/index.d.ts",
+      "Entry Point"
+    ],
+    [
+      "action/src/log.d.ts",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/worker-pipeline.js",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/worker.js",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action/worker1.js",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "action.yml",
+      "Configuration"
+    ],
+    [
+      "app.yml",
+      "Configuration"
+    ],
+    [
+      "jest.config.js",
+      "Configuration"
+    ],
+    [
+      "middleware.ts",
+      "HTTP Middleware"
+    ],
+    [
+      "package.json",
+      "Package Configuration"
+    ],
+    [
+      "public/index.html",
+      "Public Assets"
+    ],
+    [
+      "rollup.config.ts",
+      "Configuration"
+    ],
+    [
+      "serverless.yml",
+      "Styling"
+    ],
+    [
+      "src/bot.ts",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "src/chat.ts",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "src/index.ts",
+      "Entry Point"
+    ],
+    [
+      "src/log.ts",
+      "JavaScript/TypeScript Code"
+    ],
+    [
+      "test/fixtures/issues.opened.json",
+      "Tests"
+    ],
+    [
+      "test/index.test.ts",
+      "Tests"
+    ],
+    [
+      "tsconfig.json",
+      "Configuration"
+    ]
+  ],
+  "systems": {
+    "nodes": [
+      "Environment Variables",
+      "api.github.com",
+      "api.openai.com",
+      "developer.github.com",
+      "example.com",
+      "facebook.github.io",
+      "github.com",
+      "help.github.com",
+      "help.github.com)",
+      "models.github.ai",
+      "opensource.guide",
+      "platform.openai.com",
+      "probot.github.io",
+      "tbaggery.com",
+      "user-images.githubusercontent.com",
+      "www.contributor-covenant.org"
+    ],
+    "kinds": {
+      "Environment Variables": [
+        "env",
+        "20 variables"
+      ],
+      "api.github.com": [
+        "url",
+        "GitHub - Code hosting and collaboration",
+        [
+          "https://api.github.com"
+        ]
+      ],
+      "api.openai.com": [
+        "url",
+        "OpenAI API - AI/ML services",
+        [
+          "https://api.openai.com/v1"
+        ]
+      ],
+      "developer.github.com": [
+        "url",
+        "GitHub - Code hosting and collaboration (19 endpoints)",
+        [
+          "https://developer.github.com/v3/apps/permissions/#permission-on-contents",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-administration",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-statuses",
+          "https://developer.github.com/v3/apps/permissions/#metadata-permissions",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-pages",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests",
+          "https://developer.github.com/v4/object/repositoryvulnerabilityalert/",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-issues",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-organization-projects",
+          "https://developer.github.com/apps/building-github-apps/creating-github-apps-from-a-manifest/",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-organization-hooks",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-repository-hooks",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-team-discussions",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-repository-projects",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-organization-user-blocking",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-members",
+          "https://developer.github.com/v3/apps/permissions/",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-checks",
+          "https://developer.github.com/v3/apps/permissions/#permission-on-deployments"
+        ]
+      ],
+      "example.com": [
+        "url",
+        "Example Service - External service",
+        [
+          "https://example.com/"
+        ]
+      ],
+      "facebook.github.io": [
+        "url",
+        "External Service",
+        [
+          "https://facebook.github.io/jest/"
+        ]
+      ],
+      "github.com": [
+        "url",
+        "GitHub - Code hosting and collaboration (15 endpoints)",
+        [
+          "https://github.com/marketplace/actions/chatgpt-codereviewer)",
+          "https://github.com/nangongchengfeng/Chat-CodeReview.git",
+          "https://github.com/nock/nock",
+          "https://github.com/lukeed/tsm",
+          "https://github.com/anc95/ChatGPT-CodeReview)",
+          "https://github.com/kulshekhar/ts-jest",
+          "https://github.com/marketplace/models",
+          "https://github.com/sturdy-dev/codereview.gpt)",
+          "https://github.com/sturdy-dev/codereview.gpt)\uc5d0\uc11c",
+          "https://github.com/pinojs/pino/issues/1243#issuecomment-982774762",
+          "https://github.com/apps/cr-gpt",
+          "https://github.com/pinojs/pino/pull/1113",
+          "https://github.com//",
+          "https://github.com/anc95/ChatGPT-CodeReview/pull/21)",
+          "https://github.com/apps/cr-gpt);"
+        ]
+      ],
+      "help.github.com": [
+        "url",
+        "GitHub - Code hosting and collaboration",
+        [
+          "https://help.github.com/articles/about-pull-requests/)"
+        ]
+      ],
+      "help.github.com)": [
+        "url",
+        "GitHub - Code hosting and collaboration",
+        [
+          "https://help.github.com)"
+        ]
+      ],
+      "models.github.ai": [
+        "url",
+        "External Service",
+        [
+          "https://models.github.ai/inference"
+        ]
+      ],
+      "opensource.guide": [
+        "url",
+        "Open Source Guide - Community resources",
+        [
+          "https://opensource.guide/how-to-contribute/)"
+        ]
+      ],
+      "platform.openai.com": [
+        "url",
+        "OpenAI Platform - AI model access (3 endpoints)",
+        [
+          "https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p",
+          "https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature",
+          "https://platform.openai.com/docs/models"
+        ]
+      ],
+      "probot.github.io": [
+        "url",
+        "Probot - GitHub app framework (3 endpoints)",
+        [
+          "https://probot.github.io/docs/development/)\u4e86\u89e3\u66f4\u591a\u8be6\u60c5",
+          "https://probot.github.io/docs/development/#configuring-a-github-app",
+          "https://probot.github.io/docs/development/)"
+        ]
+      ],
+      "tbaggery.com": [
+        "url",
+        "Git Notes - Git enhancement tool",
+        [
+          "http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)."
+        ]
+      ],
+      "user-images.githubusercontent.com": [
+        "url",
+        "GitHub Images - Image hosting (2 endpoints)",
+        [
+          "https://user-images.githubusercontent.com/13167934/218999459-812206e1-d8d2-4900-8ce8-19b5b6e1f5cb.png",
+          "https://user-images.githubusercontent.com/13167934/218533628-3974b70f-c423-44b0-b096-d1ec2ace85ea.png"
+        ]
+      ],
+      "www.contributor-covenant.org": [
+        "url",
+        "Contributor Covenant - Code of conduct (2 endpoints)",
+        [
+          "https://www.contributor-covenant.org",
+          "https://www.contributor-covenant.org/version/1/4/code-of-conduct.html"
+        ]
+      ]
+    }
+  },
+  "scanned_files": [
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "README.ja.md",
+    "README.ko.md",
+    "README.md",
+    "README.zh-CN.md",
+    "README.zh-TW.md",
+    "action/37.index.cjs.js",
+    "action/file.js",
+    "action/middleware.d.ts",
+    "action/multipart-parser-d1d13d05.js",
+    "action/rollup.config.d.ts",
+    "action/src/bot.d.ts",
+    "action/src/chat.d.ts",
+    "action/src/index.d.ts",
+    "action/src/log.d.ts",
+    "action/worker-pipeline.js",
+    "action/worker.js",
+    "action/worker1.js",
+    "action.yml",
+    "app.yml",
+    "jest.config.js",
+    "middleware.ts",
+    "package.json",
+    "public/index.html",
+    "rollup.config.ts",
+    "serverless.yml",
+    "src/bot.ts",
+    "src/chat.ts",
+    "src/index.ts",
+    "src/log.ts",
+    "test/fixtures/issues.opened.json",
+    "test/index.test.ts",
+    "tsconfig.json"
+  ],
+  "tree": "\u251c\u2500\u2500 \ud83d\udcc4 CODE_OF_CONDUCT.md\n\u251c\u2500\u2500 \ud83d\udcc4 CONTRIBUTING.md\n\u251c\u2500\u2500 \ud83d\udcc4 Dockerfile\n\u251c\u2500\u2500 \ud83d\udcc4 LICENSE\n\u251c\u2500\u2500 \ud83d\udcc4 README.ja.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.ko.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.zh-CN.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.zh-TW.md\n\u251c\u2500\u2500 \ud83d\udcc1 action/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 37.index.cjs.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 _tiktoken_bg.wasm\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 encoder.json\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 file.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 github-action.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 middleware.d.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 multipart-parser-d1d13d05.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 rollup.config.d.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc1 src/\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 bot.d.ts\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 chat.d.ts\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.d.ts\n\u2502   \u2502   \u2514\u2500\u2500 \ud83d\udcc4 log.d.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 vocab.bpe\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 worker-pipeline.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 worker.js\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 worker1.js\n\u251c\u2500\u2500 \ud83d\udcc4 action.yml\n\u251c\u2500\u2500 \ud83d\udcc1 api/\n\u2502   \u2514\u2500\u2500 \ud83d\udcc1 github/\n\u2502       \u2514\u2500\u2500 \ud83d\udcc1 webhooks/\n\u251c\u2500\u2500 \ud83d\udcc4 app.yml\n\u251c\u2500\u2500 \ud83d\udcc4 jest.config.js\n\u251c\u2500\u2500 \ud83d\udcc4 middleware.ts\n\u251c\u2500\u2500 \ud83d\udcc4 package-lock.json\n\u251c\u2500\u2500 \ud83d\udcc4 package.json\n\u251c\u2500\u2500 \ud83d\udcc4 pm2.config.cjs\n\u251c\u2500\u2500 \ud83d\udcc1 public/\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 index.html\n\u251c\u2500\u2500 \ud83d\udcc4 rollup.config.ts\n\u251c\u2500\u2500 \ud83d\udcc4 serverless.yml\n\u251c\u2500\u2500 \ud83d\udcc1 src/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 aws-lambda.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 bot.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 chat.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 fetch-polyfill.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 github-action.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.ts\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 log.ts\n\u251c\u2500\u2500 \ud83d\udcc1 test/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc1 fixtures/\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 issues.opened.json\n\u2502   \u2502   \u2514\u2500\u2500 \ud83d\udcc4 mock-cert.pem\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 index.test.ts\n\u251c\u2500\u2500 \ud83d\udcc4 tsconfig.json\n\u2514\u2500\u2500 \ud83d\udcc4 yarn.lock",
+  "llm_explanation": "# Comprehensive Codebase Analysis\n\n## 1. What this repo likely does\n\nThis repository appears to be an **AI-powered GitHub code review bot** that integrates with GitHub repositories to provide automated code reviews using OpenAI's language models. The system can be deployed in multiple ways:\n\n- As a **GitHub Action** for CI/CD pipelines\n- As an **AWS Lambda function** for serverless deployment  \n- As a **GitHub App/Probot** for webhook-based integration\n- As a **standalone Node.js application**\n\nThe bot analyzes pull request diffs/patches and provides intelligent feedback, determining whether code changes look good to merge (LGTM - \"Looks Good To Me\") or if there are issues that need attention. It supports multiple AI providers including OpenAI, Azure OpenAI, and GitHub Models.\n\n## 2. How to run it locally (step-by-step setup instructions)\n\n### Prerequisites\n- Node.js (latest LTS version)\n- npm package manager\n- OpenAI API key or GitHub Models access\n- GitHub repository with appropriate permissions\n\n### Setup Steps\n\n1. **Clone and install dependencies**\n   ```bash\n   git clone <repository-url>\n   cd <repository-name>\n   npm install\n   ```\n\n2. **Environment Configuration**\n   Create a `.env` file in the root directory:\n   ```env\n   OPENAI_API_KEY=your_openai_api_key_here\n   GITHUB_TOKEN=your_github_token_here\n   # Optional: For Azure OpenAI\n   AZURE_OPENAI_ENDPOINT=your_azure_endpoint\n   # Optional: For GitHub Models\n   GITHUB_MODELS_TOKEN=your_github_models_token\n   ```\n\n3. **Build the application**\n   ```bash\n   npm run build\n   ```\n\n4. **Run locally**\n   ```bash\n   npm start\n   ```\n\n### Alternative deployment options:\n\n**As GitHub Action:**\n- The `action.yml` file is already configured\n- Push to GitHub and reference in your workflow files\n\n**As AWS Lambda:**\n```bash\nnpm run build:lambda\n# Deploy the generated lambda/ directory to AWS\n```\n\n**For development/testing:**\n```bash\nnpm test\n```\n\n## 3. Key moving parts and relations\n\n### Core Components Architecture\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502   GitHub        \u2502    \u2502   Entry Points   \u2502    \u2502   AI Service    \u2502\n\u2502   Webhooks      \u2502\u2500\u2500\u2500\u25b6\u2502   - Probot       \u2502\u2500\u2500\u2500\u25b6\u2502   - OpenAI      \u2502\n\u2502   - PR Events   \u2502    \u2502   - GitHub Action\u2502    \u2502   - Azure       \u2502\n\u2502   - Push Events \u2502    \u2502   - Lambda       \u2502    \u2502   - GitHub      \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518    \u2502   - Standalone   \u2502    \u2502     Models      \u2502\n                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                \u2502\n                       \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                       \u2502   Core Logic     \u2502\n                       \u2502   - Chat class   \u2502\n                       \u2502   - Bot logic    \u2502\n                       \u2502   - Multipart    \u2502\n                       \u2502     Parser       \u2502\n                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### Key Relationships:\n- **Entry Points** \u2192 Multiple deployment targets (Action, Lambda, Probot, Standalone)\n- **Bot Logic** \u2192 Handles GitHub webhook events and orchestrates reviews\n- **Chat Class** \u2192 Interfaces with AI services for code analysis\n- **Multipart Parser** \u2192 Handles form data processing for HTTP requests\n- **Build System** \u2192 Rollup + NCC for different deployment bundles\n\n## 4. External systems it touches\n\n### Primary Integrations:\n- **GitHub API** (`api.github.com`) - Repository data, PR information, comments\n- **OpenAI API** (`api.openai.com`, `platform.openai.com`) - AI-powered code analysis\n- **GitHub Models** (`models.github.ai`) - Alternative AI provider\n- **Azure OpenAI** - Enterprise AI service option\n\n### Documentation & Resources:\n- **GitHub Developer** (`developer.github.com`) - API documentation\n- **Probot Framework** (`probot.github.io`)"
+}

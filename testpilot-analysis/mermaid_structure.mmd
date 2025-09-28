@@ -1,0 +1,25 @@
+graph TD
+    subgraph Structure [Project Structure]
+        dir0["action/"]
+        Structure --> dir0
+        file0_0["37.index.cjs.js"]
+        dir0 --> file0_0
+        file0_1["file.js"]
+        dir0 --> file0_1
+        dir1["public/"]
+        Structure --> dir1
+        file1_0["index.html"]
+        dir1 --> file1_0
+        dir2["src/"]
+        Structure --> dir2
+        file2_0["bot.ts"]
+        dir2 --> file2_0
+        file2_1["chat.ts"]
+        dir2 --> file2_1
+        dir3["test/"]
+        Structure --> dir3
+        file3_0["fixtures"]
+        dir3 --> file3_0
+        file3_1["index.test.ts"]
+        dir3 --> file3_1
+    end

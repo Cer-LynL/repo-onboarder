@@ -18,14 +18,12 @@ import argparse
 import tempfile
 import shutil
 
-# Try to load python-dotenv if available
 try:
     from dotenv import load_dotenv
     DOTENV_AVAILABLE = True
 except ImportError:
     DOTENV_AVAILABLE = False
 
-# External dependencies
 try:
     import anthropic
     ANTHROPIC_AVAILABLE = True
@@ -44,7 +42,7 @@ class Config:
     output_dir: str = "onboarding"
     pr_mode: str = "auto"
     llm_enabled: bool = True
-    llm_model: str = "claude-3-haiku-20240307"
+    llm_model: str = "claude-sonnet-4-20250514"
     
     def __post_init__(self):
         if self.ignore is None:
@@ -250,15 +248,9 @@ class RepoAnalyzer:
             items = sorted([p for p in path.iterdir() if not p.name.startswith('.')])
             items = [p for p in items if not self._should_ignore_file(p)]
             
-            # Limit items per directory
-            if len(items) > self.config.max_items_per_dir:
-                items = items[:self.config.max_items_per_dir]
-                has_more = True
-            else:
-                has_more = False
-            
+            # Show all items, no truncation
             for i, item in enumerate(items):
-                is_last = i == len(items) - 1 and not has_more
+                is_last = i == len(items) - 1
                 current_prefix = "└── " if is_last else "├── "
                 
                 if item.is_dir():
@@ -273,9 +265,6 @@ class RepoAnalyzer:
                 if self._should_scan_file(item):
                     rel_path = item.relative_to(self.repo_path)
                     self.analysis["scanned_files"].append(str(rel_path))
-            
-            if has_more:
-                lines.append(f"{prefix}└── ... and {len(sorted([p for p in path.iterdir() if not p.name.startswith('.')])) - self.config.max_items_per_dir} more")
                 
         except PermissionError:
             lines.append(f"{prefix}└── [Permission denied]")
@@ -490,7 +479,8 @@ class RepoAnalyzer:
             ]
         }
         
-        routes = set()
+        # Use a dictionary for proper deduplication by route signature
+        routes_dict = {}
         
         for file_path in self.analysis["scanned_files"]:
             if not self._should_scan_file(self.repo_path / file_path):
@@ -513,15 +503,17 @@ class RepoAnalyzer:
                             
                             # Normalize path to avoid duplicates
                             path = path.strip('"\'`')
-                            # Create a unique key for deduplication
+                            # Create a unique key for deduplication (framework, method, path)
                             route_key = (framework, method, path)
-                            routes.add((framework, method, path, file_path))
+                            # Store the first occurrence with source file info
+                            if route_key not in routes_dict:
+                                routes_dict[route_key] = (framework, method, path, file_path)
                             
             except Exception as e:
                 continue
         
         # Convert to list and sort for consistent output
-        self.analysis["routes"] = sorted(list(routes), key=lambda x: (x[0], x[1], x[2]))
+        self.analysis["routes"] = sorted(list(routes_dict.values()), key=lambda x: (x[0], x[1], x[2]))
     
     def _detect_external_systems(self):
         """Detect external systems and integrations"""
@@ -598,15 +590,63 @@ class RepoAnalyzer:
                 self.analysis["systems"]["nodes"].append("Environment Variables")
                 self.analysis["systems"]["kinds"]["Environment Variables"] = ["env", f"Variables: {', '.join(env_list[:5])}{'...' if len(env_list) > 5 else ''}"]
         
-        # Add URLs to systems (deduplicated by domain)
-        domains = set()
+        # Add URLs to systems (deduplicated by domain with better descriptions)
+        domain_info = {}
         for url in sorted(urls):
             domain = re.sub(r'https?://([^/]+).*', r'\1', url)
-            domains.add(domain)
+            if domain not in domain_info:
+                domain_info[domain] = {
+                    "urls": set(),
+                    "description": self._get_domain_description(domain)
+                }
+            domain_info[domain]["urls"].add(url)
         
-        for domain in sorted(domains):
+        for domain, info in sorted(domain_info.items()):
             self.analysis["systems"]["nodes"].append(domain)
-            self.analysis["systems"]["kinds"][domain] = ["url", "External API/Service"]
+            url_count = len(info["urls"])
+            description = info["description"]
+            if url_count > 1:
+                description += f" ({url_count} endpoints)"
+            self.analysis["systems"]["kinds"][domain] = ["url", description, list(info["urls"])]
+    
+    def _get_domain_description(self, domain: str) -> str:
+        """Get a description for a domain based on common patterns"""
+        domain_lower = domain.lower()
+        
+        descriptions = {
+            "api.openai.com": "OpenAI API - AI/ML services",
+            "github.com": "GitHub - Code hosting and collaboration",
+            "help.github.com": "GitHub Help - Documentation and support",
+            "platform.openai.com": "OpenAI Platform - AI model access",
+            "probot.github.io": "Probot - GitHub app framework",
+            "docs.npmjs.com": "npm Documentation - Package registry docs",
+            "coveralls.io": "Coveralls - Code coverage tracking",
+            "badgen.net": "Badgen - Status badges and shields",
+            "cdn.jsdelivr.net": "jsDelivr CDN - JavaScript package delivery",
+            "user-images.githubusercontent.com": "GitHub Images - Image hosting",
+            "opensource.guide": "Open Source Guide - Community resources",
+            "www.contributor-covenant.org": "Contributor Covenant - Code of conduct",
+            "bugs.chromium.org": "Chromium Bug Tracker - Browser issue tracking",
+            "tbaggery.com": "Git Notes - Git enhancement tool",
+            "api.scorecard.dev": "Scorecard - Security analysis",
+            "api.example.com": "Example API - External service",
+            "example.com": "Example Service - External service"
+        }
+        
+        # Check for partial matches
+        for pattern, desc in descriptions.items():
+            if pattern in domain_lower:
+                return desc
+        
+        # Generic fallback
+        if "api" in domain_lower:
+            return "External API Service"
+        elif "docs" in domain_lower:
+            return "Documentation Site"
+        elif "help" in domain_lower:
+            return "Help/Support Site"
+        else:
+            return "External Service"
     
     def _generate_llm_explanation(self):
         """Generate LLM explanation using Anthropic Claude"""
@@ -614,35 +654,70 @@ class RepoAnalyzer:
             return
         
         try:
-            # Get API key from environment
             api_key = os.getenv('ANTHROPIC_API_KEY')
             if not api_key:
                 print("⚠️  No ANTHROPIC_API_KEY found, skipping LLM explanation")
                 return
             
+            print(f"🔑 Using API key: {api_key[:20]}...")
             client = anthropic.Anthropic(api_key=api_key)
             
-            # Prepare context
+            # Read ALL important files for detailed LLM analysis
+            file_contents = {}
+            important_extensions = ['.ts', '.js', '.py', '.go', '.rs', '.java', '.kt']
+            
+            # Get all key files based on role and importance
+            key_files = []
+            for file_path, role in self.analysis["roles"][:25]:  # Top 25 files
+                if any(file_path.lower().endswith(ext) for ext in important_extensions):
+                    # Prioritize files that are likely to contain business logic
+                    if any(keyword in file_path.lower() for keyword in ['bot', 'chat', 'main', 'app', 'server', 'index', 'core', 'service', 'controller', 'model']):
+                        key_files.append(file_path)
+            
+            # Read actual file contents for LLM analysis
+            for file_path in key_files[:10]:  # Limit to 10 most important files
+                try:
+                    full_path = self.repo_path / file_path
+                    if full_path.exists() and full_path.stat().st_size < 100000:  # Max 100KB files
+                        with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                            content = f.read()
+                            # Get first 5000 characters for better analysis
+                            file_contents[file_path] = content[:5000]
+                except:
+                    continue
+            
             context = {
                 "tech_stack": self.analysis["stack"],
                 "entrypoints": self.analysis["entrypoints"],
                 "routes": self.analysis["routes"],
                 "external_systems": self.analysis["systems"]["nodes"],
-                "file_roles": self.analysis["roles"][:20]  # Limit for token budget
+                "file_roles": self.analysis["roles"][:20],
+                "file_contents": file_contents
             }
             
             prompt = f"""
-            Analyze this codebase and provide a concise explanation in 5 sections:
+            You are a senior developer analyzing a codebase. Provide a comprehensive explanation in 5 sections:
             
             1. What this repo likely does
-            2. How to run it
+            2. How to run it locally (step-by-step setup instructions)  
             3. Key moving parts and relations
             4. External systems it touches
-            5. Next tasks for a new dev
+            5. DETAILED File analysis - For each key file with actual code content provided, explain EXACTLY what it does
             
             Context: {json.dumps(context, indent=2)}
             
-            Keep each section to 2-3 sentences maximum. Be specific and actionable.
+            IMPORTANT for section 5: I have provided you with the actual source code content of key files in the "file_contents" section. 
+            
+            For EACH file in file_contents, you must:
+            - Read the actual code provided
+            - Explain what specific functions/classes/logic it contains
+            - Describe its role in the overall application
+            - Mention key functions, classes, imports, and what they do
+            - Be very specific about the implementation details you can see in the code
+            
+            Do NOT give generic descriptions like "JavaScript/TypeScript Code". Instead, analyze the actual code and explain what it does specifically.
+            
+            For example, if you see a bot.ts file with specific functions, explain what those functions do, what APIs they call, how they process data, etc.
             """
             
             response = client.messages.create(
@@ -656,6 +731,34 @@ class RepoAnalyzer:
             
         except Exception as e:
             print(f"⚠️  LLM explanation failed: {e}")
+            print("💡 Continuing without LLM features. Check your ANTHROPIC_API_KEY.")
+            # Add a basic explanation without LLM
+            self.analysis["llm_explanation"] = f"""
+# Repository Analysis
+
+## What this repo likely does
+Based on the file structure and dependencies, this appears to be a {self.analysis['stack']['languages'][0] if self.analysis['stack']['languages'] else 'software'} project.
+
+## How to run it locally
+1. Install dependencies: `npm install` or `pip install -r requirements.txt`
+2. Set up environment variables
+3. Run the main entry point
+
+## Key moving parts and relations
+- Entry points: {', '.join(self.analysis['entrypoints'][:3])}
+- External systems: {', '.join(self.analysis['systems']['nodes'][:5])}
+
+## External systems it touches
+{', '.join(self.analysis['systems']['nodes'])}
+
+## Next tasks for a new dev
+1. Review the codebase structure
+2. Set up the development environment
+3. Run tests to ensure everything works
+4. Read the documentation
+
+*Note: This analysis was generated without AI assistance due to API key issues.*
+"""
     
     def generate_outputs(self):
         """Generate all output files"""
@@ -745,8 +848,11 @@ class RepoAnalyzer:
     
     def _generate_structure_mermaid(self) -> str:
         """Generate Mermaid structure diagram"""
+        if not self.analysis["scanned_files"]:
+            return "graph TD\n    Root[\"📁 Project Root\"]\n    Root --> Empty[\"No files to display\"]"
+        
         lines = ["graph TD"]
-        lines.append("    subgraph Structure [Project Structure]")
+        lines.append("    Root[\"📁 Project Root\"]")
         
         # Create a proper tree structure
         dirs = set()
@@ -760,20 +866,23 @@ class RepoAnalyzer:
                 files_by_dir[dir_name].append(parts[1] if len(parts) > 1 else "")
         
         # Add main directories and their files
-        for i, dir_name in enumerate(sorted(dirs)[:8]):  # Limit to 8 dirs
+        for i, dir_name in enumerate(sorted(dirs)[:6]):  # Limit to 6 dirs for better readability
             dir_id = f"dir{i}"
-            lines.append(f"        {dir_id}[\"{dir_name}/\"]")
-            lines.append(f"        Structure --> {dir_id}")
+            # Escape special characters and use folder icon
+            safe_dir_name = dir_name.replace('"', '\\"').replace("'", "\\'")
+            lines.append(f"    {dir_id}[\"📁 {safe_dir_name}/\"]")
+            lines.append(f"    Root --> {dir_id}")
             
             # Add some key files from each directory
-            key_files = files_by_dir[dir_name][:3]  # Max 3 files per dir
+            key_files = files_by_dir[dir_name][:2]  # Max 2 files per dir
             for j, file_name in enumerate(key_files):
                 if file_name:  # Skip empty names
                     file_id = f"file{i}_{j}"
-                    lines.append(f"        {file_id}[\"{file_name}\"]")
-                    lines.append(f"        {dir_id} --> {file_id}")
+                    # Escape special characters and use file icon
+                    safe_file_name = file_name.replace('"', '\\"').replace("'", "\\'")
+                    lines.append(f"    {file_id}[\"📄 {safe_file_name}\"]")
+                    lines.append(f"    {dir_id} --> {file_id}")
         
-        lines.append("    end")
         return "\n".join(lines)
     
     def _generate_routes_mermaid(self) -> str:
@@ -801,16 +910,20 @@ class RepoAnalyzer:
         lines.append("    subgraph Systems [External Systems]")
         lines.append("        app[Application]")
         
-        for i, node in enumerate(self.analysis["systems"]["nodes"][:12]):  # Limit to 12 systems
+        for i, node in enumerate(self.analysis["systems"]["nodes"][:10]):  # Limit to 10 systems
             system_id = f"sys{i}"
             # Get description from kinds if available
             kinds = self.analysis["systems"]["kinds"].get(node, [])
             description = kinds[1] if len(kinds) > 1 else ""
             
+            # Escape special characters
+            safe_node = node.replace('"', '\\"').replace("'", "\\'")
+            safe_description = description.replace('"', '\\"').replace("'", "\\'")
+            
             if description:
-                lines.append(f"        {system_id}[\"{node}<br/>{description}\"]")
+                lines.append(f"        {system_id}[\"{safe_node}<br/>{safe_description}\"]")
             else:
-                lines.append(f"        {system_id}[\"{node}\"]")
+                lines.append(f"        {system_id}[\"{safe_node}\"]")
             lines.append(f"        app --> {system_id}")
         
         lines.append("    end")
@@ -870,7 +983,6 @@ class RepoAnalyzer:
             <button class="tab-button" onclick="showTab('structure')">Structure</button>
             <button class="tab-button" onclick="showTab('routes')">HTTP Routes</button>
             <button class="tab-button" onclick="showTab('systems')">External Systems</button>
-            <button class="tab-button" onclick="showTab('raw')">Raw Markdown</button>
         </nav>
         
         <div id="overview" class="tab-content active">
@@ -888,13 +1000,9 @@ class RepoAnalyzer:
         </div>
         
         <div id="systems" class="tab-content">
-            <h2>External Systems</h2>
+            <h2>External Systems & Integrations</h2>
             <div id="systems-diagram"></div>
-        </div>
-        
-        <div id="raw" class="tab-content">
-            <h2>Raw Markdown</h2>
-            <pre id="raw-markdown"></pre>
+            <div id="systems-details"></div>
         </div>
     </div>
     
@@ -904,15 +1012,30 @@ class RepoAnalyzer:
         const structureMmd = {json.dumps(structure_mmd)};
         const routesMmd = {json.dumps(routes_mmd)};
         const systemsMmd = {json.dumps(systems_mmd)};
+        const systemsData = {json.dumps(self.analysis["systems"])};
         
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {{
             // Render markdown
             document.getElementById('markdown-content').innerHTML = marked.parse(markdownContent);
-            document.getElementById('raw-markdown').textContent = markdownContent;
             
-            // Initialize Mermaid
-            mermaid.initialize({{ startOnLoad: false }});
+            // Initialize Mermaid with dark theme
+            mermaid.initialize({{ 
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {{
+                    primaryColor: '#1f6feb',
+                    primaryTextColor: '#f0f6fc',
+                    primaryBorderColor: '#30363d',
+                    lineColor: '#484f58',
+                    secondaryColor: '#21262d',
+                    tertiaryColor: '#161b22',
+                    background: '#0d1117',
+                    mainBkg: '#21262d',
+                    secondBkg: '#161b22',
+                    tertiaryBkg: '#0d1117'
+                }}
+            }});
             
             // Render diagrams
             if (structureMmd.trim()) {{
@@ -947,6 +1070,9 @@ class RepoAnalyzer:
             }} else {{
                 document.getElementById('systems-diagram').innerHTML = '<p>(none)</p>';
             }}
+            
+            // Generate external systems details with clickable links
+            generateSystemsDetails();
         }});
         
         function showTab(tabName) {{
@@ -962,6 +1088,52 @@ class RepoAnalyzer:
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
         }}
+        
+        function generateSystemsDetails() {{
+            const systemsDetails = document.getElementById('systems-details');
+            if (!systemsData || !systemsData.nodes || systemsData.nodes.length === 0) {{
+                systemsDetails.innerHTML = '<p>No external systems detected.</p>';
+                return;
+            }}
+            
+            let html = '<div class="systems-list">';
+            systemsData.nodes.forEach(node => {{
+                const kinds = systemsData.kinds[node] || [];
+                const description = kinds[1] || 'External service';
+                const urls = kinds[2] || [];
+                
+                html += '<div class="system-item">';
+                html += '<h3>' + node + '</h3>';
+                html += '<p class="system-description">' + description + '</p>';
+                
+                if (urls && urls.length > 0) {{
+                    // Show only up to 2 representative URLs per domain to reduce noise
+                    const maxUrlsToShow = 2;
+                    const urlsToShow = urls.slice(0, maxUrlsToShow);
+                    const remainingCount = urls.length - urlsToShow.length;
+                    
+                    html += '<div class="system-urls">';
+                    if (urls.length === 1) {{
+                        html += '<h4>Endpoint:</h4>';
+                    }} else {{
+                        html += '<h4>Sample Endpoints:</h4>';
+                    }}
+                    html += '<ul>';
+                    urlsToShow.forEach(url => {{
+                        html += '<li><a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a></li>';
+                    }});
+                    if (remainingCount > 0) {{
+                        html += '<li style="color: #8b949e; font-style: italic;">... and ' + remainingCount + ' more endpoint' + (remainingCount > 1 ? 's' : '') + '</li>';
+                    }}
+                    html += '</ul></div>';
+                }}
+                
+                html += '</div>';
+            }});
+            html += '</div>';
+            
+            systemsDetails.innerHTML = html;
+        }}
     </script>
 </body>
 </html>"""
@@ -973,7 +1145,7 @@ class RepoAnalyzer:
         templates_dir = output_dir / "templates"
         templates_dir.mkdir(exist_ok=True)
         
-        css_content = """/* Repo Onboarder Styles */
+        css_content = """/* Repo Onboarder Styles - Dark Mode */
 * {
     margin: 0;
     padding: 0;
@@ -983,8 +1155,8 @@ class RepoAnalyzer:
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background: #f8f9fa;
+    color: #e9ecef;
+    background: #0d1117;
 }
 
 .container {
@@ -997,30 +1169,37 @@ header {
     text-align: center;
     margin-bottom: 30px;
     padding: 20px;
-    background: white;
+    background: #161b22;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid #30363d;
 }
 
 h1 {
-    color: #2c3e50;
+    color: #f0f6fc;
     margin-bottom: 10px;
+}
+
+header p {
+    color: #8b949e;
 }
 
 .tabs {
     display: flex;
     margin-bottom: 20px;
-    background: white;
+    background: #161b22;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     overflow: hidden;
+    border: 1px solid #30363d;
 }
 
 .tab-button {
     flex: 1;
     padding: 15px 20px;
     border: none;
-    background: white;
+    background: #161b22;
+    color: #f0f6fc;
     cursor: pointer;
     transition: background 0.2s;
     font-size: 14px;
@@ -1028,20 +1207,21 @@ h1 {
 }
 
 .tab-button:hover {
-    background: #f8f9fa;
+    background: #21262d;
 }
 
 .tab-button.active {
-    background: #007bff;
+    background: #1f6feb;
     color: white;
 }
 
 .tab-content {
     display: none;
-    background: white;
+    background: #161b22;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid #30363d;
 }
 
 .tab-content.active {
@@ -1049,15 +1229,19 @@ h1 {
 }
 
 h2 {
-    color: #2c3e50;
+    color: #f0f6fc;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid #30363d;
 }
 
 h3 {
-    color: #495057;
+    color: #e6edf3;
     margin: 20px 0 10px 0;
+}
+
+h4 {
+    color: #e6edf3;
 }
 
 ul, ol {
@@ -1066,10 +1250,17 @@ ul, ol {
 
 li {
     margin: 5px 0;
+    color: #e9ecef;
+}
+
+p {
+    color: #e9ecef;
+    margin: 10px 0;
 }
 
 code {
-    background: #f8f9fa;
+    background: #262c36;
+    color: #f85149;
     padding: 2px 6px;
     border-radius: 4px;
     font-family: 'Monaco', 'Menlo', monospace;
@@ -1077,7 +1268,9 @@ code {
 }
 
 pre {
-    background: #f8f9fa;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    color: #e6edf3;
     padding: 15px;
     border-radius: 4px;
     overflow-x: auto;
@@ -1086,6 +1279,7 @@ pre {
 
 pre code {
     background: none;
+    color: #e6edf3;
     padding: 0;
 }
 
@@ -1094,12 +1288,103 @@ pre code {
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 12px;
     line-height: 1.4;
+    color: #e6edf3;
 }
 
 /* Mermaid diagram styling */
 .mermaid {
     text-align: center;
     margin: 20px 0;
+    background: #0d1117;
+    border-radius: 6px;
+    padding: 20px;
+    border: 1px solid #30363d;
+}
+
+/* External Systems Styling */
+.systems-list {
+    margin-top: 20px;
+}
+
+.system-item {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.system-item h3 {
+    color: #f0f6fc;
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.system-description {
+    color: #8b949e;
+    margin: 0 0 10px 0;
+    font-style: italic;
+}
+
+.system-urls h4 {
+    color: #e6edf3;
+    margin: 10px 0 5px 0;
+    font-size: 14px;
+}
+
+.system-urls ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.system-urls li {
+    margin: 5px 0;
+}
+
+.system-urls a {
+    color: #58a6ff;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.system-urls a:hover {
+    text-decoration: underline;
+}
+
+/* Strong/Bold text */
+strong {
+    color: #f0f6fc;
+}
+
+/* Better blockquote styling */
+blockquote {
+    border-left: 4px solid #30363d;
+    padding-left: 16px;
+    margin: 16px 0;
+    color: #8b949e;
+}
+
+/* Table styling for markdown */
+table {
+    border-collapse: collapse;
+    margin: 16px 0;
+    color: #e6edf3;
+}
+
+th, td {
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+th {
+    background: #21262d;
+    color: #f0f6fc;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background: #0d1117;
 }
 
 /* Responsive */
@@ -1113,7 +1398,7 @@ pre code {
     }
     
     .tab-button {
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid #30363d;
     }
     
     .tab-content {

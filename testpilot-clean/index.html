@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Onboarding</title>
+    <link rel="stylesheet" href="templates/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Repository Onboarding</h1>
+            <p>Comprehensive overview of this codebase</p>
+        </header>
+        
+        <nav class="tabs">
+            <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+            <button class="tab-button" onclick="showTab('structure')">Structure</button>
+            <button class="tab-button" onclick="showTab('routes')">HTTP Routes</button>
+            <button class="tab-button" onclick="showTab('systems')">External Systems</button>
+        </nav>
+        
+        <div id="overview" class="tab-content active">
+            <div id="markdown-content"></div>
+        </div>
+        
+        <div id="structure" class="tab-content">
+            <h2>Project Structure</h2>
+            <div id="structure-diagram"></div>
+        </div>
+        
+        <div id="routes" class="tab-content">
+            <h2>HTTP Routes</h2>
+            <div id="routes-diagram"></div>
+        </div>
+        
+        <div id="systems" class="tab-content">
+            <h2>External Systems & Integrations</h2>
+            <div id="systems-diagram"></div>
+            <div id="systems-details"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Embedded content
+        const markdownContent = "# Repository Overview\n\n## Tech Snapshot\n\n**Languages:** JavaScript/TypeScript\n**Frameworks:** Next.js\n**Package Managers:** npm\n**Runtimes:** Node.js\n\n## Entrypoints & Startup Scripts\n\n- `api/github/webhooks/index.ts`\n- `src/index.ts`\n\n### NPM Scripts\n- `start`: node -r dotenv/config ./dist/index.js\n- `test`: jest\n- `build`: rm -rf dist && rollup -c rollup.config.ts --configPlugin @rollup/plugin-typescript && ncc build src/github-action.cjs -o action\n- `build:lambda`: ncc build src/aws-lambda.cjs -o lambda\n\n## Project Structure\n\n```\n\u251c\u2500\u2500 \ud83d\udcc4 CODE_OF_CONDUCT.md\n\u251c\u2500\u2500 \ud83d\udcc4 CONTRIBUTING.md\n\u251c\u2500\u2500 \ud83d\udcc4 Dockerfile\n\u251c\u2500\u2500 \ud83d\udcc4 LICENSE\n\u251c\u2500\u2500 \ud83d\udcc4 README.ja.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.ko.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.zh-CN.md\n\u251c\u2500\u2500 \ud83d\udcc4 README.zh-TW.md\n\u251c\u2500\u2500 \ud83d\udcc1 action/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 37.index.cjs.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 _tiktoken_bg.wasm\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 encoder.json\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 file.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 github-action.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 middleware.d.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 multipart-parser-d1d13d05.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 rollup.config.d.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc1 src/\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 bot.d.ts\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 chat.d.ts\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.d.ts\n\u2502   \u2502   \u2514\u2500\u2500 \ud83d\udcc4 log.d.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 vocab.bpe\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 worker-pipeline.js\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 worker.js\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 worker1.js\n\u251c\u2500\u2500 \ud83d\udcc4 action.yml\n\u251c\u2500\u2500 \ud83d\udcc1 api/\n\u2502   \u2514\u2500\u2500 \ud83d\udcc1 github/\n\u2502       \u2514\u2500\u2500 \ud83d\udcc1 webhooks/\n\u251c\u2500\u2500 \ud83d\udcc4 app.yml\n\u251c\u2500\u2500 \ud83d\udcc4 jest.config.js\n\u251c\u2500\u2500 \ud83d\udcc4 middleware.ts\n\u251c\u2500\u2500 \ud83d\udcc4 package-lock.json\n\u251c\u2500\u2500 \ud83d\udcc4 package.json\n\u251c\u2500\u2500 \ud83d\udcc4 pm2.config.cjs\n\u251c\u2500\u2500 \ud83d\udcc1 public/\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 index.html\n\u251c\u2500\u2500 \ud83d\udcc4 rollup.config.ts\n\u251c\u2500\u2500 \ud83d\udcc4 serverless.yml\n\u251c\u2500\u2500 \ud83d\udcc1 src/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 aws-lambda.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 bot.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 chat.ts\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 fetch-polyfill.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 github-action.cjs\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.ts\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 log.ts\n\u251c\u2500\u2500 \ud83d\udcc1 test/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc1 fixtures/\n\u2502   \u2502   \u251c\u2500\u2500 \ud83d\udcc4 issues.opened.json\n\u2502   \u2502   \u2514\u2500\u2500 \ud83d\udcc4 mock-cert.pem\n\u2502   \u2514\u2500\u2500 \ud83d\udcc4 index.test.ts\n\u251c\u2500\u2500 \ud83d\udcc4 tsconfig.json\n\u2514\u2500\u2500 \ud83d\udcc4 yarn.lock\n```\n\n## HTTP Routes\n\nNo routes detected\n\n## External Systems & Integrations\n\n**Dependencies:** OpenAI\n\n**Environment Variables & URLs:**\n- Environment Variables\n- api.github.com\n- api.openai.com\n- developer.github.com\n- example.com\n- facebook.github.io\n- github.com\n- help.github.com\n- help.github.com)\n- models.github.ai\n- opensource.guide\n- platform.openai.com\n- probot.github.io\n- tbaggery.com\n- user-images.githubusercontent.com\n- www.contributor-covenant.org\n\n## Key Files & Roles\n\n- `CODE_OF_CONDUCT.md` - Documentation\n- `CONTRIBUTING.md` - Documentation\n- `README.ja.md` - Documentation\n- `README.ko.md` - Documentation\n- `README.md` - Documentation\n- `README.zh-CN.md` - Documentation\n- `README.zh-TW.md` - Documentation\n- `action/37.index.cjs.js` - Entry Point\n- `action/file.js` - JavaScript/TypeScript Code\n- `action/middleware.d.ts` - HTTP Middleware\n- `action/multipart-parser-d1d13d05.js` - JavaScript/TypeScript Code\n- `action/rollup.config.d.ts` - Configuration\n- `action/src/bot.d.ts` - JavaScript/TypeScript Code\n- `action/src/chat.d.ts` - JavaScript/TypeScript Code\n- `action/src/index.d.ts` - Entry Point\n- `action/src/log.d.ts` - JavaScript/TypeScript Code\n- `action/worker-pipeline.js` - JavaScript/TypeScript Code\n- `action/worker.js` - JavaScript/TypeScript Code\n- `action/worker1.js` - JavaScript/TypeScript Code\n- `action.yml` - Configuration\n- `app.yml` - Configuration\n- `jest.config.js` - Configuration\n- `middleware.ts` - HTTP Middleware\n- `package.json` - Package Configuration\n- `public/index.html` - Public Assets\n- `rollup.config.ts` - Configuration\n- `serverless.yml` - Styling\n- `src/bot.ts` - JavaScript/TypeScript Code\n- `src/chat.ts` - JavaScript/TypeScript Code\n- `src/index.ts` - Entry Point\n- `src/log.ts` - JavaScript/TypeScript Code\n- `test/fixtures/issues.opened.json` - Tests\n- `test/index.test.ts` - Tests\n- `tsconfig.json` - Configuration\n\n## High-Level Explainer\n\n# Comprehensive Codebase Analysis\n\n## 1. What this repo likely does\n\nThis repository appears to be an **AI-powered GitHub code review bot** that integrates with GitHub repositories to provide automated code reviews using OpenAI's language models. The system can be deployed in multiple ways:\n\n- As a **GitHub Action** for CI/CD pipelines\n- As an **AWS Lambda function** for serverless deployment  \n- As a **GitHub App/Probot** for webhook-based integration\n- As a **standalone Node.js application**\n\nThe bot analyzes pull request diffs/patches and provides intelligent feedback, determining whether code changes look good to merge (LGTM - \"Looks Good To Me\") or if there are issues that need attention. It supports multiple AI providers including OpenAI, Azure OpenAI, and GitHub Models.\n\n## 2. How to run it locally (step-by-step setup instructions)\n\n### Prerequisites\n- Node.js (latest LTS version)\n- npm package manager\n- OpenAI API key or GitHub Models access\n- GitHub repository with appropriate permissions\n\n### Setup Steps\n\n1. **Clone and install dependencies**\n   ```bash\n   git clone <repository-url>\n   cd <repository-name>\n   npm install\n   ```\n\n2. **Environment Configuration**\n   Create a `.env` file in the root directory:\n   ```env\n   OPENAI_API_KEY=your_openai_api_key_here\n   GITHUB_TOKEN=your_github_token_here\n   # Optional: For Azure OpenAI\n   AZURE_OPENAI_ENDPOINT=your_azure_endpoint\n   # Optional: For GitHub Models\n   GITHUB_MODELS_TOKEN=your_github_models_token\n   ```\n\n3. **Build the application**\n   ```bash\n   npm run build\n   ```\n\n4. **Run locally**\n   ```bash\n   npm start\n   ```\n\n### Alternative deployment options:\n\n**As GitHub Action:**\n- The `action.yml` file is already configured\n- Push to GitHub and reference in your workflow files\n\n**As AWS Lambda:**\n```bash\nnpm run build:lambda\n# Deploy the generated lambda/ directory to AWS\n```\n\n**For development/testing:**\n```bash\nnpm test\n```\n\n## 3. Key moving parts and relations\n\n### Core Components Architecture\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502   GitHub        \u2502    \u2502   Entry Points   \u2502    \u2502   AI Service    \u2502\n\u2502   Webhooks      \u2502\u2500\u2500\u2500\u25b6\u2502   - Probot       \u2502\u2500\u2500\u2500\u25b6\u2502   - OpenAI      \u2502\n\u2502   - PR Events   \u2502    \u2502   - GitHub Action\u2502    \u2502   - Azure       \u2502\n\u2502   - Push Events \u2502    \u2502   - Lambda       \u2502    \u2502   - GitHub      \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518    \u2502   - Standalone   \u2502    \u2502     Models      \u2502\n                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                \u2502\n                       \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                       \u2502   Core Logic     \u2502\n                       \u2502   - Chat class   \u2502\n                       \u2502   - Bot logic    \u2502\n                       \u2502   - Multipart    \u2502\n                       \u2502     Parser       \u2502\n                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### Key Relationships:\n- **Entry Points** \u2192 Multiple deployment targets (Action, Lambda, Probot, Standalone)\n- **Bot Logic** \u2192 Handles GitHub webhook events and orchestrates reviews\n- **Chat Class** \u2192 Interfaces with AI services for code analysis\n- **Multipart Parser** \u2192 Handles form data processing for HTTP requests\n- **Build System** \u2192 Rollup + NCC for different deployment bundles\n\n## 4. External systems it touches\n\n### Primary Integrations:\n- **GitHub API** (`api.github.com`) - Repository data, PR information, comments\n- **OpenAI API** (`api.openai.com`, `platform.openai.com`) - AI-powered code analysis\n- **GitHub Models** (`models.github.ai`) - Alternative AI provider\n- **Azure OpenAI** - Enterprise AI service option\n\n### Documentation & Resources:\n- **GitHub Developer** (`developer.github.com`) - API documentation\n- **Probot Framework** (`probot.github.io`)\n";
+        const structureMmd = "graph TD\n    Root[\"\ud83d\udcc1 Project Root\"]\n    dir0[\"\ud83d\udcc1 action/\"]\n    Root --> dir0\n    file0_0[\"\ud83d\udcc4 37.index.cjs.js\"]\n    dir0 --> file0_0\n    file0_1[\"\ud83d\udcc4 file.js\"]\n    dir0 --> file0_1\n    dir1[\"\ud83d\udcc1 public/\"]\n    Root --> dir1\n    file1_0[\"\ud83d\udcc4 index.html\"]\n    dir1 --> file1_0\n    dir2[\"\ud83d\udcc1 src/\"]\n    Root --> dir2\n    file2_0[\"\ud83d\udcc4 bot.ts\"]\n    dir2 --> file2_0\n    file2_1[\"\ud83d\udcc4 chat.ts\"]\n    dir2 --> file2_1\n    dir3[\"\ud83d\udcc1 test/\"]\n    Root --> dir3\n    file3_0[\"\ud83d\udcc4 fixtures\"]\n    dir3 --> file3_0\n    file3_1[\"\ud83d\udcc4 index.test.ts\"]\n    dir3 --> file3_1";
+        const routesMmd = "graph TD\n    subgraph Routes [HTTP Routes]\n        none[No routes detected]\n    end";
+        const systemsMmd = "graph TD\n    subgraph Systems [External Systems]\n        app[Application]\n        sys0[\"Environment Variables<br/>20 variables\"]\n        app --> sys0\n        sys1[\"api.github.com<br/>GitHub - Code hosting and collaboration\"]\n        app --> sys1\n        sys2[\"api.openai.com<br/>OpenAI API - AI/ML services\"]\n        app --> sys2\n        sys3[\"developer.github.com<br/>GitHub - Code hosting and collaboration (19 endpoints)\"]\n        app --> sys3\n        sys4[\"example.com<br/>Example Service - External service\"]\n        app --> sys4\n        sys5[\"facebook.github.io<br/>External Service\"]\n        app --> sys5\n        sys6[\"github.com<br/>GitHub - Code hosting and collaboration (15 endpoints)\"]\n        app --> sys6\n        sys7[\"help.github.com<br/>GitHub - Code hosting and collaboration\"]\n        app --> sys7\n        sys8[\"help.github.com)<br/>GitHub - Code hosting and collaboration\"]\n        app --> sys8\n        sys9[\"models.github.ai<br/>External Service\"]\n        app --> sys9\n    end";
+        const systemsData = {"nodes": ["Environment Variables", "api.github.com", "api.openai.com", "developer.github.com", "example.com", "facebook.github.io", "github.com", "help.github.com", "help.github.com)", "models.github.ai", "opensource.guide", "platform.openai.com", "probot.github.io", "tbaggery.com", "user-images.githubusercontent.com", "www.contributor-covenant.org"], "kinds": {"Environment Variables": ["env", "20 variables"], "api.github.com": ["url", "GitHub - Code hosting and collaboration", ["https://api.github.com"]], "api.openai.com": ["url", "OpenAI API - AI/ML services", ["https://api.openai.com/v1"]], "developer.github.com": ["url", "GitHub - Code hosting and collaboration (19 endpoints)", ["https://developer.github.com/v3/apps/permissions/#permission-on-contents", "https://developer.github.com/v3/apps/permissions/#permission-on-administration", "https://developer.github.com/v3/apps/permissions/#permission-on-statuses", "https://developer.github.com/v3/apps/permissions/#metadata-permissions", "https://developer.github.com/v3/apps/permissions/#permission-on-pages", "https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests", "https://developer.github.com/v4/object/repositoryvulnerabilityalert/", "https://developer.github.com/v3/apps/permissions/#permission-on-issues", "https://developer.github.com/v3/apps/permissions/#permission-on-organization-projects", "https://developer.github.com/apps/building-github-apps/creating-github-apps-from-a-manifest/", "https://developer.github.com/v3/apps/permissions/#permission-on-organization-hooks", "https://developer.github.com/v3/apps/permissions/#permission-on-repository-hooks", "https://developer.github.com/v3/apps/permissions/#permission-on-team-discussions", "https://developer.github.com/v3/apps/permissions/#permission-on-repository-projects", "https://developer.github.com/v3/apps/permissions/#permission-on-organization-user-blocking", "https://developer.github.com/v3/apps/permissions/#permission-on-members", "https://developer.github.com/v3/apps/permissions/", "https://developer.github.com/v3/apps/permissions/#permission-on-checks", "https://developer.github.com/v3/apps/permissions/#permission-on-deployments"]], "example.com": ["url", "Example Service - External service", ["https://example.com/"]], "facebook.github.io": ["url", "External Service", ["https://facebook.github.io/jest/"]], "github.com": ["url", "GitHub - Code hosting and collaboration (15 endpoints)", ["https://github.com/marketplace/actions/chatgpt-codereviewer)", "https://github.com/nangongchengfeng/Chat-CodeReview.git", "https://github.com/nock/nock", "https://github.com/lukeed/tsm", "https://github.com/anc95/ChatGPT-CodeReview)", "https://github.com/kulshekhar/ts-jest", "https://github.com/marketplace/models", "https://github.com/sturdy-dev/codereview.gpt)", "https://github.com/sturdy-dev/codereview.gpt)\uc5d0\uc11c", "https://github.com/pinojs/pino/issues/1243#issuecomment-982774762", "https://github.com/apps/cr-gpt", "https://github.com/pinojs/pino/pull/1113", "https://github.com//", "https://github.com/anc95/ChatGPT-CodeReview/pull/21)", "https://github.com/apps/cr-gpt);"]], "help.github.com": ["url", "GitHub - Code hosting and collaboration", ["https://help.github.com/articles/about-pull-requests/)"]], "help.github.com)": ["url", "GitHub - Code hosting and collaboration", ["https://help.github.com)"]], "models.github.ai": ["url", "External Service", ["https://models.github.ai/inference"]], "opensource.guide": ["url", "Open Source Guide - Community resources", ["https://opensource.guide/how-to-contribute/)"]], "platform.openai.com": ["url", "OpenAI Platform - AI model access (3 endpoints)", ["https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p", "https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature", "https://platform.openai.com/docs/models"]], "probot.github.io": ["url", "Probot - GitHub app framework (3 endpoints)", ["https://probot.github.io/docs/development/)\u4e86\u89e3\u66f4\u591a\u8be6\u60c5", "https://probot.github.io/docs/development/#configuring-a-github-app", "https://probot.github.io/docs/development/)"]], "tbaggery.com": ["url", "Git Notes - Git enhancement tool", ["http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)."]], "user-images.githubusercontent.com": ["url", "GitHub Images - Image hosting (2 endpoints)", ["https://user-images.githubusercontent.com/13167934/218999459-812206e1-d8d2-4900-8ce8-19b5b6e1f5cb.png", "https://user-images.githubusercontent.com/13167934/218533628-3974b70f-c423-44b0-b096-d1ec2ace85ea.png"]], "www.contributor-covenant.org": ["url", "Contributor Covenant - Code of conduct (2 endpoints)", ["https://www.contributor-covenant.org", "https://www.contributor-covenant.org/version/1/4/code-of-conduct.html"]]}};
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render markdown
+            document.getElementById('markdown-content').innerHTML = marked.parse(markdownContent);
+            
+            // Initialize Mermaid with dark theme
+            mermaid.initialize({ 
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#1f6feb',
+                    primaryTextColor: '#f0f6fc',
+                    primaryBorderColor: '#30363d',
+                    lineColor: '#484f58',
+                    secondaryColor: '#21262d',
+                    tertiaryColor: '#161b22',
+                    background: '#0d1117',
+                    mainBkg: '#21262d',
+                    secondBkg: '#161b22',
+                    tertiaryBkg: '#0d1117'
+                }
+            });
+            
+            // Render diagrams
+            if (structureMmd.trim()) {
+                mermaid.render('structure-svg', structureMmd).then(({svg}) => {
+                    document.getElementById('structure-diagram').innerHTML = svg;
+                }).catch(err => {
+                    console.error('Structure diagram error:', err);
+                    document.getElementById('structure-diagram').innerHTML = '<p>Error rendering structure diagram</p>';
+                });
+            } else {
+                document.getElementById('structure-diagram').innerHTML = '<p>(none)</p>';
+            }
+            
+            if (routesMmd.trim()) {
+                mermaid.render('routes-svg', routesMmd).then(({svg}) => {
+                    document.getElementById('routes-diagram').innerHTML = svg;
+                }).catch(err => {
+                    console.error('Routes diagram error:', err);
+                    document.getElementById('routes-diagram').innerHTML = '<p>Error rendering routes diagram</p>';
+                });
+            } else {
+                document.getElementById('routes-diagram').innerHTML = '<p>(none)</p>';
+            }
+            
+            if (systemsMmd.trim()) {
+                mermaid.render('systems-svg', systemsMmd).then(({svg}) => {
+                    document.getElementById('systems-diagram').innerHTML = svg;
+                }).catch(err => {
+                    console.error('Systems diagram error:', err);
+                    document.getElementById('systems-diagram').innerHTML = '<p>Error rendering systems diagram</p>';
+                });
+            } else {
+                document.getElementById('systems-diagram').innerHTML = '<p>(none)</p>';
+            }
+            
+            // Generate external systems details with clickable links
+            generateSystemsDetails();
+        });
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function generateSystemsDetails() {
+            const systemsDetails = document.getElementById('systems-details');
+            if (!systemsData || !systemsData.nodes || systemsData.nodes.length === 0) {
+                systemsDetails.innerHTML = '<p>No external systems detected.</p>';
+                return;
+            }
+            
+            let html = '<div class="systems-list">';
+            systemsData.nodes.forEach(node => {
+                const kinds = systemsData.kinds[node] || [];
+                const description = kinds[1] || 'External service';
+                const urls = kinds[2] || [];
+                
+                html += '<div class="system-item">';
+                html += '<h3>' + node + '</h3>';
+                html += '<p class="system-description">' + description + '</p>';
+                
+                if (urls && urls.length > 0) {
+                    // Show only up to 2 representative URLs per domain to reduce noise
+                    const maxUrlsToShow = 2;
+                    const urlsToShow = urls.slice(0, maxUrlsToShow);
+                    const remainingCount = urls.length - urlsToShow.length;
+                    
+                    html += '<div class="system-urls">';
+                    if (urls.length === 1) {
+                        html += '<h4>Endpoint:</h4>';
+                    } else {
+                        html += '<h4>Sample Endpoints:</h4>';
+                    }
+                    html += '<ul>';
+                    urlsToShow.forEach(url => {
+                        html += '<li><a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a></li>';
+                    });
+                    if (remainingCount > 0) {
+                        html += '<li style="color: #8b949e; font-style: italic;">... and ' + remainingCount + ' more endpoint' + (remainingCount > 1 ? 's' : '') + '</li>';
+                    }
+                    html += '</ul></div>';
+                }
+                
+                html += '</div>';
+            });
+            html += '</div>';
+            
+            systemsDetails.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
