@@ -1,0 +1,53 @@
+# Repo Onboarder Configuration
+# This file configures how the repository analysis is performed
+
+# Analysis depth and limits
+depth: 3                    # Maximum directory depth to analyze
+max_items_per_dir: 10       # Maximum items to show per directory
+
+# Files and directories to ignore
+ignore:
+  - .git
+  - node_modules
+  - .venv
+  - __pycache__
+  - dist
+  - build
+  - out
+  - target
+  - coverage
+  - .next
+  - .turbo
+  - .mypy_cache
+  - .pytest_cache
+  - .DS_Store
+  - "*.pyc"
+  - "*.pyo"
+
+# Structure analysis patterns
+structure:
+  include:
+    - "**/*"                # Include all files by default
+  exclude: []               # Additional exclusions for structure
+
+# HTTP route detection
+routes:
+  frameworks:
+    - express
+    - flask
+    - fastapi
+    - django
+    - nextjs
+
+# Output configuration
+output:
+  dir: "onboarding"         # Output directory name
+
+# PR analysis mode
+pr:
+  mode: "auto"              # "auto", "full", or "diff"
+
+# LLM integration
+llm:
+  enabled: true             # Enable Anthropic Claude integration
+  model: "claude-3-haiku-20240307"  # Claude model to use

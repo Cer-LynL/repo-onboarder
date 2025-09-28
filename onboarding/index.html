@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Onboarding</title>
+    <link rel="stylesheet" href="templates/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Repository Onboarding</h1>
+            <p>Comprehensive overview of this codebase</p>
+        </header>
+        
+        <nav class="tabs">
+            <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+            <button class="tab-button" onclick="showTab('structure')">Structure</button>
+            <button class="tab-button" onclick="showTab('routes')">HTTP Routes</button>
+            <button class="tab-button" onclick="showTab('systems')">External Systems</button>
+            <button class="tab-button" onclick="showTab('raw')">Raw Markdown</button>
+        </nav>
+        
+        <div id="overview" class="tab-content active">
+            <div id="markdown-content"></div>
+        </div>
+        
+        <div id="structure" class="tab-content">
+            <h2>Project Structure</h2>
+            <div id="structure-diagram"></div>
+        </div>
+        
+        <div id="routes" class="tab-content">
+            <h2>HTTP Routes</h2>
+            <div id="routes-diagram"></div>
+        </div>
+        
+        <div id="systems" class="tab-content">
+            <h2>External Systems</h2>
+            <div id="systems-diagram"></div>
+        </div>
+        
+        <div id="raw" class="tab-content">
+            <h2>Raw Markdown</h2>
+            <pre id="raw-markdown"></pre>
+        </div>
+    </div>
+    
+    <script>
+        let markdownContent = '';
+        let structureMmd = '';
+        let routesMmd = '';
+        let systemsMmd = '';
+        
+        // Load content files
+        Promise.all([
+            fetch('repo_overview.md').then(r => r.text()).then(t => markdownContent = t),
+            fetch('mermaid_structure.mmd').then(r => r.text()).then(t => structureMmd = t),
+            fetch('mermaid_routes.mmd').then(r => r.text()).then(t => routesMmd = t),
+            fetch('mermaid_systems.mmd').then(r => r.text()).then(t => systemsMmd = t)
+        ]).then(() => {
+            // Render markdown
+            document.getElementById('markdown-content').innerHTML = marked.parse(markdownContent);
+            document.getElementById('raw-markdown').textContent = markdownContent;
+            
+            // Initialize Mermaid
+            mermaid.initialize({ startOnLoad: false });
+            
+            // Render diagrams
+            if (structureMmd.trim()) {
+                mermaid.render('structure-svg', structureMmd).then(({svg}) => {
+                    document.getElementById('structure-diagram').innerHTML = svg;
+                });
+            } else {
+                document.getElementById('structure-diagram').innerHTML = '<p>(none)</p>';
+            }
+            
+            if (routesMmd.trim()) {
+                mermaid.render('routes-svg', routesMmd).then(({svg}) => {
+                    document.getElementById('routes-diagram').innerHTML = svg;
+                });
+            } else {
+                document.getElementById('routes-diagram').innerHTML = '<p>(none)</p>';
+            }
+            
+            if (systemsMmd.trim()) {
+                mermaid.render('systems-svg', systemsMmd).then(({svg}) => {
+                    document.getElementById('systems-diagram').innerHTML = svg;
+                });
+            } else {
+                document.getElementById('systems-diagram').innerHTML = '<p>(none)</p>';
+            }
+        }).catch(err => {
+            console.error('Error loading content:', err);
+            document.getElementById('markdown-content').innerHTML = '<p>Error loading content. Please check that all files are present.</p>';
+        });
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

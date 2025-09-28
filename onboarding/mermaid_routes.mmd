@@ -1,0 +1,17 @@
+graph TD
+    subgraph Routes [HTTP Routes]
+        route0["DELETE /api/users/:id"]
+        Routes --> route0
+        route1["POST /api/users"]
+        Routes --> route1
+        route2["POST /api/payments"]
+        Routes --> route2
+        route3["GET /api/users"]
+        Routes --> route3
+        route4["PUT /api/users/:id"]
+        Routes --> route4
+        route5["GET /"]
+        Routes --> route5
+        route6["GET /api/users/:id"]
+        Routes --> route6
+    end

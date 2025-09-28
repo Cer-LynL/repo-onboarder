@@ -1,0 +1,167 @@
+{
+  "stack": {
+    "languages": [
+      "Python"
+    ],
+    "frameworks": [],
+    "managers": [
+      "pip"
+    ],
+    "runtimes": [],
+    "npm_scripts": {},
+    "externals": []
+  },
+  "entrypoints": [
+    "venv/lib/python3.11/site-packages/dotenv/main.py",
+    "venv/lib/python3.11/site-packages/pip/_internal/main.py",
+    "venv/lib/python3.11/site-packages/pip/_internal/cli/main.py",
+    "venv/lib/python3.11/site-packages/pydantic/main.py",
+    "venv/lib/python3.11/site-packages/pydantic/v1/main.py",
+    "venv/lib/python3.11/site-packages/httpx/_transports/wsgi.py",
+    "venv/lib/python3.11/site-packages/httpx/_transports/asgi.py",
+    "test_onboarder.py",
+    "setup.py",
+    "venv/lib/python3.11/site-packages/pip/_vendor/requests/certs.py"
+  ],
+  "routes": [
+    [
+      "express",
+      "DELETE",
+      "/api/users/:id",
+      "demo.py"
+    ],
+    [
+      "express",
+      "POST",
+      "/api/users",
+      "demo.py"
+    ],
+    [
+      "express",
+      "POST",
+      "/api/payments",
+      "demo.py"
+    ],
+    [
+      "express",
+      "GET",
+      "/api/users",
+      "demo.py"
+    ],
+    [
+      "express",
+      "PUT",
+      "/api/users/:id",
+      "demo.py"
+    ],
+    [
+      "express",
+      "GET",
+      "/",
+      "demo.py"
+    ],
+    [
+      "express",
+      "GET",
+      "/api/users/:id",
+      "demo.py"
+    ]
+  ],
+  "roles": [
+    [
+      "README.md",
+      "General code"
+    ],
+    [
+      "demo.py",
+      "General code"
+    ],
+    [
+      "onboarder.py",
+      "General code"
+    ],
+    [
+      "onboarding/index.html",
+      "General code"
+    ],
+    [
+      "onboarding/repo_overview.md",
+      "General code"
+    ],
+    [
+      "onboarding/report.json",
+      "General code"
+    ],
+    [
+      "onboarding/templates/style.css",
+      "General code"
+    ],
+    [
+      "requirements.txt",
+      "General code"
+    ],
+    [
+      "setup.py",
+      "General code"
+    ]
+  ],
+  "systems": {
+    "nodes": [
+      "ENV:JWT_SECRET",
+      "ENV:MONGODB_URI",
+      "ENV:PORT",
+      "ENV:REDIS_URL",
+      "ENV:STRIPE_API_KEY",
+      "ENV:STRIPE_PUBLISHABLE_KEY",
+      "ENV:STRIPE_SECRET_KEY",
+      "cdn.jsdelivr.net",
+      "cdn.jsdelivr.net",
+      "github.com",
+      "github.com",
+      "github.com",
+      "github.com"
+    ],
+    "kinds": {
+      "ENV:JWT_SECRET": [
+        "env"
+      ],
+      "ENV:MONGODB_URI": [
+        "env"
+      ],
+      "ENV:PORT": [
+        "env"
+      ],
+      "ENV:REDIS_URL": [
+        "env"
+      ],
+      "ENV:STRIPE_API_KEY": [
+        "env"
+      ],
+      "ENV:STRIPE_PUBLISHABLE_KEY": [
+        "env"
+      ],
+      "ENV:STRIPE_SECRET_KEY": [
+        "env"
+      ],
+      "cdn.jsdelivr.net": [
+        "url"
+      ],
+      "github.com": [
+        "url"
+      ]
+    }
+  },
+  "scanned_files": [
+    "README.md",
+    "demo.py",
+    "onboarder.py",
+    "onboarding/index.html",
+    "onboarding/repo_overview.md",
+    "onboarding/report.json",
+    "onboarding/templates/style.css",
+    "requirements.txt",
+    "setup.py"
+  ],
+  "tree": "\u251c\u2500\u2500 \ud83d\udcc4 Makefile\n\u251c\u2500\u2500 \ud83d\udcc4 README.md\n\u251c\u2500\u2500 \ud83d\udcc4 demo.py\n\u251c\u2500\u2500 \ud83d\udcc4 env.example\n\u251c\u2500\u2500 \ud83d\udcc4 install.sh\n\u251c\u2500\u2500 \ud83d\udcc4 onboarder.py\n\u251c\u2500\u2500 \ud83d\udcc1 onboarding/\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 index.html\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 mermaid_structure.mmd\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 mermaid_systems.mmd\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 repo_overview.md\n\u2502   \u251c\u2500\u2500 \ud83d\udcc4 report.json\n\u2502   \u2514\u2500\u2500 \ud83d\udcc1 templates/\n\u2502       \u2514\u2500\u2500 \ud83d\udcc4 style.css\n\u251c\u2500\u2500 \ud83d\udcc4 requirements.txt\n\u251c\u2500\u2500 \ud83d\udcc4 setup.py\n\u251c\u2500\u2500 \ud83d\udcc4 test.env\n\u2514\u2500\u2500 ... and 4 more",
+  "llm_explanation": "1. What this repo likely does:\nThis repository appears to be a Python-based web application that provides a set of RESTful API endpoints for managing users, payments, and other related functionality. It likely serves as a backend for a larger application or system.\n\n2. How to run it:\nTo run this application, you would need to set up a Python virtual environment, install the required dependencies using pip, and then execute the main entry point, which is likely the `demo.py` file.\n\n3. Key moving parts and relations:\nThe key moving parts in this codebase include the Python modules and packages, such as `dotenv`, `pip`, `pydantic`, and `httpx`, which are used for various functionalities like environment management, package management, data validation, and HTTP client handling. The `routes` section indicates the different API endpoints and their corresponding Python files.\n\n4. External systems it touches:\nThis application interacts with several external systems, including environment variables for configuration (e.g., JWT_SECRET, MONGODB_URI, STRIPE_API_KEY), as well as potential external services or APIs hosted on CDNs and GitHub.\n\n5. Next tasks for a new dev:\nFor a new developer joining this project, the next tasks would be to set up the development environment, understand the purpose and functionality of the application, review the existing codebase and API endpoints, and potentially add new features or enhance the existing ones based on the project requirements."
+}
